@@ -25,7 +25,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: false,
 }));
-app.options("*", cors());
+
 //http req se jo raw json string receive hoti h in the body usse ek readable format me convert krat hai for a programming lang to read
 app.use(express.json());
 
