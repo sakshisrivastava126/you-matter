@@ -1,3 +1,4 @@
+import { group } from 'console';
 import Message from '../models/message.js'
 
 export const getMessage = async (req, res) =>{
@@ -26,10 +27,25 @@ export const sendMessage = async (req, res) => {
         const {text} = req.body;
         const receiverId = req.params.id;
         const senderId = req.user._id;
+        const community = req.community;
 
         const newMessage = await Message.create({
             senderId, receiverId, text
         })
+
+        const targetSocketId = connectedUsers[receiverId];
+        if(targetSocketId){
+            io.to(targetSocketId).emit('personal-message', {
+                sender: senderId,
+                content : newMessage
+            });
+        }
+        else if(community){
+            req.app.io.to(group).emit('community-message', {
+                sender: senderId,
+                content : newMessage
+            });
+        }
 
         res.json({success: true, newMessage});
     }

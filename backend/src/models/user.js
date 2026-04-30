@@ -26,6 +26,11 @@ const userSchema = new Schema({
         enum : ['user', 'specialist', 'consulte', 'User', 'Specialist', 'Consulte'],
         default : 'user',
         required : true
+    },
+    community : {
+        type : Boolean,
+        required : false,
+        default : false
     }
 }, {timestamps : true});
 
