@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { sendMessage, getMessage } from "../controllers/message.controller.js";
-import { signup, login, logout} from "../controllers/user.controller.js"
+import { protect } from "../middlewares/auth.js";
+import { getDmMessages, sendDmMessage } from "../controllers/message.controller.js";
 
 const messageRouter = Router();
 
-messageRouter.post('/sendMessage', sendMessage);
-messageRouter.get('/getMessage', getMessage);
+// Direct message routes — all protected
+messageRouter.get('/dm/:receiverId',  protect, getDmMessages);
+messageRouter.post('/dm/:receiverId', protect, sendDmMessage);
 
 export default messageRouter;

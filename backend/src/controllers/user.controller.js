@@ -85,3 +85,16 @@ export const getSpecialists = async (req, res) => {
         res.json({ success: false, message: err.message });
     }
 };
+
+/** GET /auth/users — all users except the caller (for DM sidebar) */
+export const getUsers = async (req, res) => {
+    try {
+        const users = await User.find({
+            _id: { $ne: req.user._id }
+        }).select('-password').sort({ userName: 1 });
+        res.json({ success: true, users });
+    } catch (err) {
+        console.log(err);
+        res.json({ success: false, message: err.message });
+    }
+};

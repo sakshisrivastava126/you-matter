@@ -11,7 +11,6 @@ import { useAuthContext } from "@/context/AuthContext";
 const ROLES = [
   { value: "user", label: "User — I'm seeking support" },
   { value: "specialist", label: "Specialist — I'm a professional" },
-  { value: "consulte", label: "Consulte — I need consultation" },
 ];
 
 export default function SignupPage() {

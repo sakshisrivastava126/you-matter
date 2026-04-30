@@ -1,56 +1,46 @@
-import { group } from 'console';
 import Message from '../models/message.js'
 
-export const getMessage = async (req, res) =>{
-    try{
-        const {id: selectedUserId} = req.params;
-        const myId = req.user._id;
+/** GET /message/dm/:receiverId  — fetch conversation history */
+export const getDmMessages = async (req, res) => {
+    try {
+        const { receiverId } = req.params;
+        const myId = String(req.user._id);
 
         const messages = await Message.find({
-            $or : [
-                {senderId: myId, receiverId: selectedUserId},
-                {senderId: selectedUserId, receiverId:  myId}
+            $or: [
+                { senderId: myId,       receiverId: receiverId },
+                { senderId: receiverId, receiverId: myId       },
             ]
-        })
+        }).sort({ createdAt: 1 });
 
-        await Message.updateMany({senderId: myId, receiverId: selectedUserId});
-        res.json({success: true, messages});
+        res.json({ success: true, messages });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.json({success: false, message: err.message})
+        res.json({ success: false, message: err.message });
     }
-}
+};
 
-export const sendMessage = async (req, res) => {
-    try{
-        const {text} = req.body;
-        const receiverId = req.params.id;
-        const senderId = req.user._id;
-        const community = req.community;
+/** POST /message/dm/:receiverId  — persist a DM and return it */
+export const sendDmMessage = async (req, res) => {
+    try {
+        const { text } = req.body;
+        const receiverId = req.params.receiverId;
+        const senderId = String(req.user._id);
 
-        const newMessage = await Message.create({
-            senderId, receiverId, text
-        })
-
-        const targetSocketId = connectedUsers[receiverId];
-        if(targetSocketId){
-            io.to(targetSocketId).emit('personal-message', {
-                sender: senderId,
-                content : newMessage
-            });
-        }
-        else if(community){
-            req.app.io.to(group).emit('community-message', {
-                sender: senderId,
-                content : newMessage
-            });
+        if (!text?.trim()) {
+            return res.json({ success: false, message: 'Message cannot be empty' });
         }
 
-        res.json({success: true, newMessage});
+        const newMessage = await Message.create({ senderId, receiverId, message: text.trim() });
+        res.json({ success: true, newMessage });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.json({success: false, message: err.message});
+        res.json({ success: false, message: err.message });
     }
-}
+};
+
+// Keep old exports so existing imports don't break
+export const getMessage = getDmMessages;
+export const sendMessage = sendDmMessage;

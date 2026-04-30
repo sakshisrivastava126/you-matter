@@ -5,7 +5,7 @@ export interface User {
   userName: string;
   email: string;
   age: number;
-  role: "user" | "specialist" | "consulte" | "User" | "Specialist" | "Consulte";
+  role: "user" | "specialist" | "User" | "Specialist";
   community: boolean;
   createdAt: string;
   updatedAt: string;
@@ -25,6 +25,14 @@ export interface CommunityMessage {
   content: string;
   community: string;
   timestamp: string;
+}
+
+export interface DirectMessage {
+  _id?: string;
+  senderId: string;
+  receiverId: string;
+  message: string;
+  createdAt?: string;
 }
 
 export interface BotMessage {
@@ -53,6 +61,19 @@ export interface MessageResponse {
   success: boolean;
   messages?: Message[];
   newMessage?: Message;
+  message?: string;
+}
+
+export interface DmResponse {
+  success: boolean;
+  messages?: DirectMessage[];
+  newMessage?: DirectMessage;
+  message?: string;
+}
+
+export interface UsersResponse {
+  success: boolean;
+  users: User[];
   message?: string;
 }
 

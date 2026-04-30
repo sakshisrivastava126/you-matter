@@ -18,6 +18,8 @@ const io = new Server(server, {
   },
 });
 
+console.log(process.env.MONGO_URI);
+
 // Allow requests from the Next.js dev server
 app.use(cors({
   origin: ["http://localhost:3000", "http://localhost:3001"],
@@ -39,9 +41,19 @@ app.use("/auth", userRouter);
 app.use("/message", MessageRouter);
 app.use("/bot", chatRouter);
 
+// Map of userId → socketId for DM routing
+const connectedUsers = new Map();
+
 //socket is a client, has info of client
 io.on('connection', (socket)=>{
-    console.log('a user connected');
+    console.log(`[socket] connected: ${socket.id}`);
+
+    // Client registers their userId so DMs can be routed to them
+    socket.on('register-user', (userId) => {
+        connectedUsers.set(userId, socket.id);
+        console.log(`[socket] registered user ${userId} -> ${socket.id}`);
+        io.emit('online-users', Array.from(connectedUsers.keys()));
+    });
 
     //personal message to specialist
     socket.on('personal-message', ({receiverId, message})=>{
@@ -50,17 +62,47 @@ io.on('connection', (socket)=>{
 
     socket.on('join-community', (community) =>{
         socket.join(community);
-        socket.to(community).emit('user-connected', socket.id)
+        const room = io.sockets.adapter.rooms.get(community);
+        console.log(`[socket] ${socket.id} joined "${community}" — members in room: ${room ? room.size : 0}`);
+        socket.to(community).emit('user-connected', socket.id);
     });
 
     socket.on('leave-community', (community)=>{
-        socket.leave(community)
+        socket.leave(community);
+        console.log(`[socket] ${socket.id} left "${community}"`);
+    });
+
+    // Direct message: route to recipient's socket if online
+    socket.on('dm-message', ({ toUserId, message }) => {
+        const targetSocketId = connectedUsers.get(toUserId);
+        console.log(`[DM] from=${socket.id} to=${toUserId} (socket: ${targetSocketId}) msg="${message.message}"`);
+        if (targetSocketId) {
+            io.to(targetSocketId).emit('dm-message', message);
+        }
+        // Also echo back to sender so their own UI updates
+        socket.emit('dm-message', message);
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`[socket] disconnected: ${socket.id}`);
+        // Remove from connectedUsers map
+        for (const [userId, sid] of connectedUsers.entries()) {
+            if (sid === socket.id) {
+                connectedUsers.delete(userId);
+                break;
+            }
+        }
+        io.emit('online-users', Array.from(connectedUsers.keys()));
     });
 
     socket.on('community-message', (message)=>{
+        const room = io.sockets.adapter.rooms.get(message.community);
+        const memberCount = room ? room.size : 0;
+        console.log(`[msg] room="${message.community}" members=${memberCount} from=${socket.id} → broadcasting`);
         io.to(message.community).emit('community-message', message);
     });
 });
+
 
 
 //ai integration
