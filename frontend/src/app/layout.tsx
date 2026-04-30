@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" data-scroll-behavior="smooth" className={inter.variable}>
       <body className="bg-slate-950 text-white antialiased">
         <AuthProvider>{children}</AuthProvider>
       </body>
