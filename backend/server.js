@@ -13,24 +13,22 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: ["http://localhost:3000", "http://localhost:3001", "https://you-matter-sigma.vercel.app"],
     methods: ["GET", "POST"],
   },
 });
 
-console.log(process.env.MONGO_URI);
-
 // Allow requests from the Next.js dev server
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001"],
+  origin: ["http://localhost:3000", "http://localhost:3001", "https://you-matter-sigma.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: false,
 }));
+app.options("*", cors());
 //http req se jo raw json string receive hoti h in the body usse ek readable format me convert krat hai for a programming lang to read
 app.use(express.json());
 
-console.log(process.env.GEMINI_API_KEY);
 
 const MONGO_URI = process.env.MONGO_URI;
 
