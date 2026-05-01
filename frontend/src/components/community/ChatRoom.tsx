@@ -26,7 +26,6 @@ export const ChatRoom = ({
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to latest message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -47,41 +46,33 @@ export const ChatRoom = ({
   return (
     <div className="flex flex-col h-full">
       {/* Room header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/3 flex-shrink-0">
+      <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-[#E8EDF2] bg-gradient-to-r from-[#CFE8F3]/20 to-[#E6DDF5]/20 flex-shrink-0">
         <div>
-          <h2 className="text-white font-semibold capitalize">
-            # {community}
-          </h2>
-          <p className="text-slate-400 text-xs mt-0.5">
-            Community support room
-          </p>
+          <h2 className="text-[#333333] font-semibold capitalize"># {community}</h2>
+          <p className="text-[#B8C0CC] text-xs mt-0.5">Community support room</p>
         </div>
         <div
-          className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full ${
+          className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-full border ${
             isConnected
-              ? "text-emerald-400 bg-emerald-400/10"
-              : "text-slate-500 bg-white/5"
+              ? "text-emerald-600 bg-emerald-50 border-emerald-100"
+              : "text-[#B8C0CC] bg-[#FAFAFA] border-[#E8EDF2]"
           }`}
         >
-          {isConnected ? (
-            <Wifi className="w-3.5 h-3.5" />
-          ) : (
-            <WifiOff className="w-3.5 h-3.5" />
-          )}
+          {isConnected ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
           {isConnected ? "Live" : "Connecting…"}
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-4 min-h-0 bg-[#FAFAFA]">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-[#CFE8F3] border border-[#B8D8EC] flex items-center justify-center">
               <span className="text-3xl">💬</span>
             </div>
-            <p className="text-slate-400 text-sm">
+            <p className="text-[#B8C0CC] text-sm">
               Be the first to say something in{" "}
-              <span className="text-violet-400">#{community}</span>
+              <span className="text-[#4A6FA5] font-medium">#{community}</span>
             </p>
           </div>
         ) : (
@@ -97,8 +88,8 @@ export const ChatRoom = ({
       </div>
 
       {/* Input bar */}
-      <div className="flex-shrink-0 px-5 py-4 border-t border-white/10">
-        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-2 focus-within:border-violet-500/50 transition-colors">
+      <div className="flex-shrink-0 px-4 sm:px-5 py-3 sm:py-4 border-t border-[#E8EDF2] bg-white">
+        <div className="flex items-center gap-2 sm:gap-3 bg-[#FAFAFA] border border-[#E8EDF2] rounded-2xl px-3 sm:px-4 py-2 focus-within:border-[#4A6FA5]/40 focus-within:shadow-[0_0_0_3px_rgba(74,111,165,.08)] transition-all">
           <Avatar name={userName} size="sm" />
           <input
             id="community-message-input"
@@ -107,7 +98,7 @@ export const ChatRoom = ({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Message #${community}…`}
-            className="flex-1 bg-transparent text-white placeholder:text-slate-500 text-sm focus:outline-none"
+            className="flex-1 bg-transparent text-[#333333] placeholder:text-[#B8C0CC] text-sm focus:outline-none"
           />
           <Button
             id="community-send-btn"
@@ -115,15 +106,13 @@ export const ChatRoom = ({
             size="sm"
             onClick={handleSend}
             disabled={!input.trim() || !isConnected}
-            className="!px-3 !py-2 rounded-xl"
+            className="!px-2.5 sm:!px-3 !py-2 rounded-xl flex-shrink-0"
           >
             <Send className="w-4 h-4" />
           </Button>
         </div>
         {!isConnected && (
-          <p className="text-xs text-slate-500 mt-2 text-center">
-            Connecting to server…
-          </p>
+          <p className="text-xs text-[#B8C0CC] mt-2 text-center">Connecting to server…</p>
         )}
       </div>
     </div>
@@ -145,25 +134,25 @@ const MessageBubble = ({ msg, isMine }: MessageBubbleProps) => {
     : "";
 
   return (
-    <div className={`flex gap-3 ${isMine ? "flex-row-reverse" : ""}`}>
+    <div className={`flex gap-2.5 sm:gap-3 ${isMine ? "flex-row-reverse" : ""}`}>
       <Avatar name={msg.senderName || msg.sender} size="sm" className="flex-shrink-0 mt-1" />
-      <div className={`max-w-[70%] ${isMine ? "items-end" : "items-start"} flex flex-col gap-1`}>
+      <div className={`max-w-[80%] sm:max-w-[70%] ${isMine ? "items-end" : "items-start"} flex flex-col gap-1`}>
         {!isMine && (
-          <span className="text-xs text-slate-400 font-medium px-1">
+          <span className="text-xs text-[#B8C0CC] font-medium px-1">
             {msg.senderName || "User"}
           </span>
         )}
         <div
-          className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+          className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
             isMine
-              ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-tr-sm"
-              : "bg-white/10 text-slate-200 rounded-tl-sm"
+              ? "bg-[#4A6FA5] text-white rounded-tr-sm shadow-sm"
+              : "bg-white text-[#333333] rounded-tl-sm border border-[#E8EDF2] shadow-sm"
           }`}
         >
           {msg.content}
         </div>
         {timeStr && (
-          <span className="text-xs text-slate-600 px-1">{timeStr}</span>
+          <span className="text-xs text-[#B8C0CC] px-1">{timeStr}</span>
         )}
       </div>
     </div>

@@ -68,43 +68,43 @@ export const ChatBot = ({ userName }: ChatBotProps) => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10 bg-white/3 flex-shrink-0">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/25">
-          <Bot className="w-5 h-5 text-white" />
+      <div className="flex items-center gap-3 px-4 sm:px-5 py-4 border-b border-[#E8EDF2] bg-gradient-to-r from-[#CFE8F3]/30 to-[#E6DDF5]/30 flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-[#CFE8F3] flex items-center justify-center flex-shrink-0">
+          <Bot className="w-5 h-5 text-[#4A6FA5]" />
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-white font-semibold">AI Support Companion</h2>
-            <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+            <h2 className="text-[#333333] font-semibold text-sm sm:text-base truncate">AI Support Companion</h2>
+            <Sparkles className="w-3.5 h-3.5 text-[#6B52A5] flex-shrink-0" />
           </div>
-          <p className="text-slate-400 text-xs">Powered by Groq · 10+ years expertise</p>
+          <p className="text-[#B8C0CC] text-xs">Powered by Groq · 10+ years expertise</p>
         </div>
         {/* Live indicator */}
-        <div className="ml-auto flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-400/10 px-3 py-1.5 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Online
+        <div className="flex-shrink-0 flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1.5 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="hidden sm:inline">Online</span>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 sm:py-5 space-y-4 sm:space-y-5 min-h-0 bg-[#FAFAFA]">
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+            className={`flex gap-2.5 sm:gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
           >
             {msg.role === "assistant" ? (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center flex-shrink-0 mt-1">
-                <Bot className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-full bg-[#CFE8F3] flex items-center justify-center flex-shrink-0 mt-1">
+                <Bot className="w-4 h-4 text-[#4A6FA5]" />
               </div>
             ) : (
               <Avatar name={userName} size="sm" className="flex-shrink-0 mt-1" />
             )}
             <div
-              className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+              className={`max-w-[82%] sm:max-w-[75%] px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.role === "user"
-                  ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-tr-sm"
-                  : "bg-white/10 text-slate-200 rounded-tl-sm"
+                  ? "bg-[#4A6FA5] text-white rounded-tr-sm shadow-sm"
+                  : "bg-white text-[#333333] rounded-tl-sm border border-[#E8EDF2] shadow-sm"
               }`}
             >
               {msg.content}
@@ -114,14 +114,14 @@ export const ChatBot = ({ userName }: ChatBotProps) => {
 
         {/* Typing indicator */}
         {isTyping && (
-          <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
-              <Bot className="w-4 h-4 text-white" />
+          <div className="flex gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#CFE8F3] flex items-center justify-center flex-shrink-0">
+              <Bot className="w-4 h-4 text-[#4A6FA5]" />
             </div>
-            <div className="bg-white/10 px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce [animation-delay:0ms]" />
-              <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce [animation-delay:150ms]" />
-              <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce [animation-delay:300ms]" />
+            <div className="bg-white border border-[#E8EDF2] px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1.5 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-[#B8C0CC] animate-bounce [animation-delay:0ms]" />
+              <span className="w-2 h-2 rounded-full bg-[#B8C0CC] animate-bounce [animation-delay:150ms]" />
+              <span className="w-2 h-2 rounded-full bg-[#B8C0CC] animate-bounce [animation-delay:300ms]" />
             </div>
           </div>
         )}
@@ -129,8 +129,8 @@ export const ChatBot = ({ userName }: ChatBotProps) => {
       </div>
 
       {/* Input */}
-      <div className="flex-shrink-0 px-5 py-4 border-t border-white/10">
-        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-2 focus-within:border-teal-500/50 transition-colors">
+      <div className="flex-shrink-0 px-4 sm:px-5 py-3 sm:py-4 border-t border-[#E8EDF2] bg-white">
+        <div className="flex items-center gap-2 sm:gap-3 bg-[#FAFAFA] border border-[#E8EDF2] rounded-2xl px-3 sm:px-4 py-2 focus-within:border-[#4A6FA5]/40 focus-within:shadow-[0_0_0_3px_rgba(74,111,165,.08)] transition-all">
           <input
             id="chatbot-input"
             type="text"
@@ -139,7 +139,7 @@ export const ChatBot = ({ userName }: ChatBotProps) => {
             onKeyDown={handleKeyDown}
             placeholder="Share how you're feeling…"
             disabled={isTyping}
-            className="flex-1 bg-transparent text-white placeholder:text-slate-500 text-sm focus:outline-none disabled:opacity-50"
+            className="flex-1 bg-transparent text-[#333333] placeholder:text-[#B8C0CC] text-sm focus:outline-none disabled:opacity-50"
           />
           <Button
             id="chatbot-send-btn"
@@ -147,12 +147,12 @@ export const ChatBot = ({ userName }: ChatBotProps) => {
             size="sm"
             onClick={handleSend}
             disabled={!input.trim() || isTyping}
-            className="!px-3 !py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500"
+            className="!px-2.5 sm:!px-3 !py-2 rounded-xl flex-shrink-0"
           >
             <Send className="w-4 h-4" />
           </Button>
         </div>
-        <p className="text-xs text-slate-600 text-center mt-2">
+        <p className="text-xs text-[#B8C0CC] text-center mt-2">
           This is an AI companion, not a replacement for professional care.
         </p>
       </div>

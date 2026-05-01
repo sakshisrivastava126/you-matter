@@ -15,17 +15,17 @@ export default function ChatbotPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Bot className="w-6 h-6 text-teal-400" />
+          <h1 className="text-2xl font-bold text-[#333333] flex items-center gap-2">
+            <Bot className="w-6 h-6 text-[#4A6FA5]" />
             AI Support
           </h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-[#B8C0CC] text-sm mt-1">
             Talk to your AI psychiatric companion — available 24/7
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-3 py-2 rounded-xl">
+        <div className="flex items-center gap-2 text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-2 rounded-xl">
           <ShieldCheck className="w-4 h-4" />
-          Private & confidential
+          Private &amp; confidential
         </div>
       </div>
 

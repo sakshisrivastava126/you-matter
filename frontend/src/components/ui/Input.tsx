@@ -14,14 +14,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-slate-300"
+            className="text-sm font-medium text-[#5A6475]"
           >
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C0CC] pointer-events-none">
               {icon}
             </span>
           )}
@@ -29,18 +29,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={`
-              w-full bg-white/5 border rounded-xl px-4 py-3 text-white placeholder:text-slate-500
-              focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent
+              w-full bg-white border rounded-xl px-4 py-3 text-[#333333]
+              placeholder:text-[#B8C0CC]
+              focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/25 focus:border-[#4A6FA5]/60
               transition-all duration-200
               ${icon ? "pl-10" : ""}
-              ${error ? "border-red-500/60 bg-red-500/5" : "border-white/10 hover:border-white/20"}
+              ${error
+                ? "border-red-300 bg-red-50/50 focus:ring-red-200"
+                : "border-[#E8EDF2] hover:border-[#D1DAE5]"
+              }
               ${className}
             `}
             {...props}
           />
         </div>
         {error && (
-          <p className="text-xs text-red-400 flex items-center gap-1">
+          <p className="text-xs text-red-500 flex items-center gap-1">
             <span>⚠</span> {error}
           </p>
         )}

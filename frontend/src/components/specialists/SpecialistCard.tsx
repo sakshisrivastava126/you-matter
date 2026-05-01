@@ -11,7 +11,6 @@ interface SpecialistCardProps {
   specialist: User;
 }
 
-// Deterministic fake rating and specialty seeded by user id
 const getSpecialistMeta = (id: string) => {
   const hash = id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const specialties = [
@@ -33,16 +32,16 @@ export const SpecialistCard = ({ specialist }: SpecialistCardProps) => {
   const meta = getSpecialistMeta(specialist._id);
 
   return (
-    <Card className="hover:border-violet-500/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-500/10 group">
+    <Card className="hover:border-[#CFE8F3] hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(74,111,165,.13)] transition-all duration-300 group border-[#E8EDF2]">
       <CardBody className="flex flex-col gap-4">
         {/* Header */}
         <div className="flex items-start gap-4">
           <Avatar name={specialist.userName} size="lg" />
           <div className="flex-1 min-w-0">
-            <h3 className="text-white font-semibold text-base truncate">
+            <h3 className="text-[#333333] font-semibold text-base truncate">
               {specialist.userName}
             </h3>
-            <p className="text-violet-400 text-sm mt-0.5">{meta.specialty}</p>
+            <p className="text-[#4A6FA5] text-sm mt-0.5">{meta.specialty}</p>
             <div className="flex items-center gap-1.5 mt-1.5">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
@@ -50,11 +49,11 @@ export const SpecialistCard = ({ specialist }: SpecialistCardProps) => {
                   className={`w-3.5 h-3.5 ${
                     i < Math.floor(Number(meta.rating))
                       ? "text-amber-400 fill-amber-400"
-                      : "text-slate-600"
+                      : "text-[#E8EDF2]"
                   }`}
                 />
               ))}
-              <span className="text-slate-400 text-xs ml-1">
+              <span className="text-[#B8C0CC] text-xs ml-1">
                 {meta.rating} ({meta.reviews} reviews)
               </span>
             </div>
@@ -63,20 +62,27 @@ export const SpecialistCard = ({ specialist }: SpecialistCardProps) => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2.5">
-            <Award className="w-4 h-4 text-violet-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 bg-[#FAFAFA] border border-[#E8EDF2] rounded-xl px-3 py-2.5">
+            <Award className="w-4 h-4 text-[#4A6FA5] flex-shrink-0" />
             <div>
-              <p className="text-white text-sm font-semibold">{meta.experience}+ yrs</p>
-              <p className="text-slate-500 text-xs">Experience</p>
+              <p className="text-[#333333] text-sm font-semibold">{meta.experience}+ yrs</p>
+              <p className="text-[#B8C0CC] text-xs">Experience</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2.5">
-            <Clock className="w-4 h-4 text-teal-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 bg-[#FAFAFA] border border-[#E8EDF2] rounded-xl px-3 py-2.5">
+            <Clock className="w-4 h-4 text-[#6B52A5] flex-shrink-0" />
             <div>
-              <p className="text-white text-sm font-semibold">Available</p>
-              <p className="text-slate-500 text-xs">Mon – Fri</p>
+              <p className="text-[#333333] text-sm font-semibold">Available</p>
+              <p className="text-[#B8C0CC] text-xs">Mon – Fri</p>
             </div>
           </div>
+        </div>
+
+        {/* Specialty badge */}
+        <div>
+          <span className="inline-flex items-center text-xs bg-[#E6DDF5] text-[#6B52A5] border border-[#D8CFF0] px-3 py-1 rounded-full font-medium">
+            {meta.specialty}
+          </span>
         </div>
 
         {/* Actions */}

@@ -48,32 +48,32 @@ export default function SpecialistsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Stethoscope className="w-6 h-6 text-teal-400" />
+          <h1 className="text-2xl font-bold text-[#333333] flex items-center gap-2">
+            <Stethoscope className="w-6 h-6 text-[#4A6FA5]" />
             Specialists
           </h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-[#B8C0CC] text-sm mt-1">
             Connect with certified mental health professionals
           </p>
         </div>
 
         {/* Search */}
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#B8C0CC] pointer-events-none" />
           <input
             id="specialist-search"
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name…"
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+            className="w-full bg-white border border-[#E8EDF2] rounded-xl pl-10 pr-4 py-2.5 text-[#333333] text-sm placeholder:text-[#B8C0CC] focus:outline-none focus:ring-2 focus:ring-[#4A6FA5]/20 focus:border-[#4A6FA5]/50 transition-all"
           />
         </div>
       </div>
 
       {/* Stats bar */}
       {!loading && !error && (
-        <div className="flex items-center gap-2 text-sm text-slate-400">
+        <div className="flex items-center gap-2 text-sm text-[#B8C0CC]">
           <Users className="w-4 h-4" />
           <span>
             {filtered.length} specialist{filtered.length !== 1 ? "s" : ""} available
@@ -94,12 +94,12 @@ export default function SpecialistsPage() {
       {/* Error state */}
       {error && !loading && (
         <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+          <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
             <AlertCircle className="w-7 h-7 text-red-400" />
           </div>
           <div>
-            <p className="text-white font-medium">{error}</p>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-[#333333] font-medium">{error}</p>
+            <p className="text-[#B8C0CC] text-sm mt-1">
               Make sure the backend is running on port 4444.
             </p>
           </div>
@@ -113,14 +113,14 @@ export default function SpecialistsPage() {
       {/* Empty state */}
       {!loading && !error && filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-            <Stethoscope className="w-7 h-7 text-slate-500" />
+          <div className="w-14 h-14 rounded-2xl bg-[#FAFAFA] border border-[#E8EDF2] flex items-center justify-center">
+            <Stethoscope className="w-7 h-7 text-[#B8C0CC]" />
           </div>
           <div>
-            <p className="text-white font-medium">
+            <p className="text-[#333333] font-medium">
               {search ? "No specialists match your search" : "No specialists registered yet"}
             </p>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-[#B8C0CC] text-sm mt-1">
               {search
                 ? "Try a different name"
                 : "Specialists can sign up with the 'Specialist' role."}

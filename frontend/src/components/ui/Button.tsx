@@ -12,12 +12,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40",
+    "bg-[#4A6FA5] hover:bg-[#3A5A8F] text-white shadow-md shadow-[#4A6FA5]/20 hover:shadow-[#4A6FA5]/30 border border-[#4A6FA5]",
   secondary:
-    "bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/40 backdrop-blur-sm",
-  ghost: "bg-transparent hover:bg-white/10 text-slate-300 hover:text-white",
+    "bg-[#E6DDF5] hover:bg-[#D8CFF0] text-[#4A6FA5] border border-[#D1C8E8] hover:border-[#BEB4D8]",
+  ghost:
+    "bg-transparent hover:bg-[#CFE8F3]/50 text-[#5A6475] hover:text-[#4A6FA5] border border-transparent hover:border-[#CFE8F3]",
   danger:
-    "bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 border border-red-500/30",
+    "bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 border border-red-200 hover:border-red-300",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -41,7 +42,7 @@ export const Button = ({
       className={`
         inline-flex items-center justify-center gap-2 font-semibold
         transition-all duration-200 ease-out
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A6FA5]/40 focus-visible:ring-offset-1
         disabled:opacity-50 disabled:cursor-not-allowed
         active:scale-[0.97]
         ${variantClasses[variant]}

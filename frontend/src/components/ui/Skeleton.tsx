@@ -6,12 +6,12 @@ interface SkeletonProps {
 
 export const Skeleton = ({ className = "" }: SkeletonProps) => (
   <div
-    className={`animate-pulse rounded-lg bg-white/10 ${className}`}
+    className={`animate-pulse rounded-lg bg-[#EEF2F7] ${className}`}
   />
 );
 
 export const SkeletonCard = () => (
-  <div className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4">
+  <div className="rounded-2xl border border-[#E8EDF2] bg-white p-6 space-y-4 shadow-[0_2px_12px_rgba(74,111,165,.07)]">
     <div className="flex items-center gap-3">
       <Skeleton className="w-12 h-12 rounded-full" />
       <div className="flex-1 space-y-2">

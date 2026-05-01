@@ -19,8 +19,8 @@ export default function DashboardLayout({
           <Topbar />
 
           {/* Page content */}
-          <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-            <div className="max-w-6xl mx-auto animate-fade-in">
+          <main className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div className="max-w-6xl w-full mx-auto animate-fade-in flex-1 flex flex-col min-h-0">
               {children}
             </div>
           </main>

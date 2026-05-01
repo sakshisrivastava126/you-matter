@@ -3,15 +3,15 @@ import React from "react";
 interface CardProps {
   children: React.ReactNode;
   className?: string;
-  glass?: boolean; // enables glassmorphism variant
+  glass?: boolean;
 }
 
-export const Card = ({ children, className = "", glass = true }: CardProps) => {
+export const Card = ({ children, className = "", glass: _glass = true }: CardProps) => {
   return (
     <div
       className={`
-        rounded-2xl border border-white/10 
-        ${glass ? "bg-white/5 backdrop-blur-md" : "bg-slate-800/60"}
+        rounded-2xl border border-[#E8EDF2] bg-white
+        shadow-[0_2px_12px_rgba(74,111,165,.07)]
         ${className}
       `}
     >
@@ -27,7 +27,7 @@ export const CardHeader = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <div className={`px-6 pt-6 pb-4 border-b border-white/10 ${className}`}>
+  <div className={`px-6 pt-6 pb-4 border-b border-[#E8EDF2] ${className}`}>
     {children}
   </div>
 );

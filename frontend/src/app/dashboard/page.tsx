@@ -23,24 +23,30 @@ const quickLinks = [
     icon: Users,
     label: "Community",
     desc: "Join the support room",
-    color: "from-violet-500 to-indigo-600",
-    glow: "shadow-violet-500/20",
+    iconBg: "bg-[#CFE8F3]",
+    iconColor: "text-[#4A6FA5]",
+    hoverBorder: "hover:border-[#CFE8F3]",
+    btnColor: "text-[#4A6FA5]",
   },
   {
     href: "/dashboard/specialists",
     icon: Stethoscope,
     label: "Specialists",
     desc: "Book a session",
-    color: "from-teal-500 to-emerald-600",
-    glow: "shadow-teal-500/20",
+    iconBg: "bg-[#E6DDF5]",
+    iconColor: "text-[#6B52A5]",
+    hoverBorder: "hover:border-[#E6DDF5]",
+    btnColor: "text-[#6B52A5]",
   },
   {
     href: "/dashboard/chatbot",
     icon: Bot,
     label: "AI Support",
     desc: "Chat with companion",
-    color: "from-pink-500 to-rose-600",
-    glow: "shadow-pink-500/20",
+    iconBg: "bg-[#CFE8F3]",
+    iconColor: "text-[#3A6A8A]",
+    hoverBorder: "hover:border-[#CFE8F3]",
+    btnColor: "text-[#3A6A8A]",
   },
 ];
 
@@ -64,19 +70,19 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Welcome header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
         <Avatar name={user.userName} size="xl" />
         <div>
-          <p className="text-slate-400 text-sm mb-1">Good to see you 👋</p>
-          <h1 className="text-3xl font-bold text-white">{user.userName}</h1>
-          <div className="flex flex-wrap items-center gap-3 mt-2">
-            <span className="inline-flex items-center gap-1.5 text-xs bg-violet-500/15 text-violet-300 border border-violet-500/25 px-3 py-1 rounded-full capitalize font-medium">
+          <p className="text-[#B8C0CC] text-sm mb-1">Good to see you 👋</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#333333]">{user.userName}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+            <span className="inline-flex items-center gap-1.5 text-xs bg-[#E6DDF5] text-[#6B52A5] border border-[#D8CFF0] px-3 py-1 rounded-full capitalize font-medium">
               <Shield className="w-3 h-3" />
               {user.role}
             </span>
-            <span className="inline-flex items-center gap-1.5 text-xs bg-white/8 text-slate-400 px-3 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-xs bg-[#FAFAFA] text-[#B8C0CC] border border-[#E8EDF2] px-3 py-1 rounded-full">
               <Calendar className="w-3 h-3" />
               Joined {joinedDate}
             </span>
@@ -84,82 +90,72 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Profile info card */}
+      {/* Profile info + daily tip */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2">
           <CardBody>
-            <h2 className="text-white font-semibold text-lg mb-5 flex items-center gap-2">
-              <Heart className="w-5 h-5 text-violet-400" />
+            <h2 className="text-[#333333] font-semibold text-lg mb-5 flex items-center gap-2">
+              <Heart className="w-5 h-5 text-[#4A6FA5]" />
               Your Profile
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-start gap-3 bg-white/5 rounded-xl p-4">
-                <Mail className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-slate-500 text-xs mb-1">Email</p>
-                  <p className="text-white text-sm font-medium truncate">{user.email}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {[
+                { icon: Mail, label: "Email", value: user.email },
+                { icon: Calendar, label: "Age", value: `${user.age} years` },
+                { icon: Shield, label: "Role", value: user.role, capitalize: true },
+                {
+                  icon: TrendingUp,
+                  label: "Community",
+                  value: user.community ? "Active Member" : "Not Joined",
+                },
+              ].map(({ icon: Icon, label, value, capitalize }) => (
+                <div key={label} className="flex items-start gap-3 bg-[#FAFAFA] border border-[#E8EDF2] rounded-xl p-3 sm:p-4">
+                  <Icon className="w-4 h-4 text-[#B8C0CC] mt-0.5 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[#B8C0CC] text-xs mb-0.5">{label}</p>
+                    <p className={`text-[#333333] text-sm font-medium truncate ${capitalize ? "capitalize" : ""}`}>
+                      {value}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-3 bg-white/5 rounded-xl p-4">
-                <Calendar className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Age</p>
-                  <p className="text-white text-sm font-medium">{user.age} years</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 bg-white/5 rounded-xl p-4">
-                <Shield className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Role</p>
-                  <p className="text-white text-sm font-medium capitalize">{user.role}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 bg-white/5 rounded-xl p-4">
-                <TrendingUp className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Community</p>
-                  <p className="text-white text-sm font-medium">
-                    {user.community ? "Active Member" : "Not Joined"}
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </CardBody>
         </Card>
 
         {/* Daily tip */}
-        <Card className="bg-gradient-to-br from-violet-600/20 to-indigo-600/10 border-violet-500/20">
-          <CardBody className="flex flex-col h-full gap-3">
-            <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
+        <div className="rounded-2xl border border-[#D8CFF0] bg-gradient-to-br from-[#CFE8F3] to-[#E6DDF5] shadow-[0_2px_12px_rgba(74,111,165,.10)]">
+          <div className="p-6 flex flex-col h-full gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/70 flex items-center justify-center shadow-sm">
               <span className="text-xl">💡</span>
             </div>
-            <h3 className="text-white font-semibold">Daily Wellness Tip</h3>
-            <p className="text-slate-300 text-sm leading-relaxed flex-1">{tip}</p>
-            <p className="text-violet-400 text-xs font-medium">
+            <h3 className="text-[#333333] font-semibold">Daily Wellness Tip</h3>
+            <p className="text-[#5A6475] text-sm leading-relaxed flex-1">{tip}</p>
+            <p className="text-[#4A6FA5] text-xs font-medium">
               {new Date().toLocaleDateString("en-IN", { weekday: "long", month: "short", day: "numeric" })}
             </p>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Quick links */}
       <div>
-        <h2 className="text-white font-semibold text-lg mb-4">Explore</h2>
+        <h2 className="text-[#333333] font-semibold text-lg mb-4">Explore</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {quickLinks.map(({ href, icon: Icon, label, desc, color, glow }) => (
+          {quickLinks.map(({ href, icon: Icon, label, desc, iconBg, iconColor, hoverBorder, btnColor }) => (
             <Link key={href} href={href}>
-              <Card className={`hover:border-white/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${glow} cursor-pointer group`}>
+              <Card
+                className={`hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(74,111,165,.13)] ${hoverBorder} transition-all duration-300 cursor-pointer group border-[#E8EDF2]`}
+              >
                 <CardBody className="flex flex-col gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200`}
-                  >
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className={`w-12 h-12 rounded-xl ${iconBg} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                    <Icon className={`w-6 h-6 ${iconColor}`} />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">{label}</h3>
-                    <p className="text-slate-400 text-sm mt-0.5">{desc}</p>
+                    <h3 className="text-[#333333] font-semibold">{label}</h3>
+                    <p className="text-[#B8C0CC] text-sm mt-0.5">{desc}</p>
                   </div>
-                  <Button variant="ghost" size="sm" className="w-fit !px-0 text-violet-400 hover:text-violet-300">
+                  <Button variant="ghost" size="sm" className={`w-fit !px-0 !border-0 ${btnColor} hover:!bg-transparent font-medium`}>
                     Open →
                   </Button>
                 </CardBody>

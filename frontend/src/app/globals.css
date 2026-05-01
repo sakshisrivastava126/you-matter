@@ -1,69 +1,83 @@
 @import "tailwindcss";
 
+/* ══════════════════════════════════════════════════════════════
+   YOU MATTER — Design Tokens (Calm Pastel Wellness Theme)
+══════════════════════════════════════════════════════════════ */
 :root {
   --font-inter: "Inter", sans-serif;
+
+  /* Palette */
+  --color-bg:          #DFEEF5;
+  --color-surface:     #e2f1f4;
+  --color-primary:     #CFE8F3;   /* powder blue */
+  --color-secondary:   #E6DDF5;   /* soft lavender */
+  --color-cta:         #4A6FA5;   /* deep calm blue */
+  --color-cta-hover:   #3A5A8F;
+  --color-cta-light:   rgba(74, 111, 165, 0.10);
+  --color-text:        #333333;
+  --color-text-sub:    #5A6475;
+  --color-text-muted:  #B8C0CC;
+  --color-border:      #E8EDF2;
+  --color-border-med:  #D1DAE5;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(74,111,165,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:  0 4px 16px rgba(74,111,165,.10), 0 1px 4px rgba(0,0,0,.05);
+  --shadow-lg:  0 8px 32px rgba(74,111,165,.13), 0 2px 8px rgba(0,0,0,.06);
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+/* ── Reset ──────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-inter), system-ui, sans-serif;
-  background-color: #020817;
-  color: #f8fafc;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
-}
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--color-primary); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-cta); opacity: .5; }
 
-/* Background mesh gradient for auth pages */
+/* ── Auth page background ────────────────────────────────────── */
 .bg-auth-mesh {
-  background-color: #020817;
+  background-color: var(--color-bg);
   background-image:
-    radial-gradient(ellipse 80% 50% at 20% -20%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(20, 184, 166, 0.12) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(207,232,243,.60) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 110%, rgba(230,221,245,.55) 0%, transparent 60%);
 }
 
-/* Background for dashboard */
+/* ── Dashboard background ────────────────────────────────────── */
 .bg-dashboard {
-  background-color: #020817;
+  background-color: var(--color-bg);
   background-image:
-    radial-gradient(ellipse 60% 40% at 0% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(20, 184, 166, 0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 50% 40% at 0% 0%, rgba(207,232,243,.35) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 100% 100%, rgba(230,221,245,.30) 0%, transparent 55%);
 }
 
-/* Smooth page transitions */
+/* ── Gradient hero highlight ─────────────────────────────────── */
+.bg-hero-gradient {
+  background: linear-gradient(135deg, #CFE8F3, #E6DDF5);
+}
+
+/* ── Page fade-in ────────────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in {
-  animation: fadeIn 0.35s ease-out forwards;
-}
+.animate-fade-in { animation: fadeIn 0.35s ease-out forwards; }
 
-/* Hover bg subtle */
-.hover\:bg-white\/8:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-}
-.bg-white\/3 {
-  background-color: rgba(255, 255, 255, 0.03);
+/* ── Utility helpers ─────────────────────────────────────────── */
+.shadow-calm-sm  { box-shadow: var(--shadow-sm); }
+.shadow-calm-md  { box-shadow: var(--shadow-md); }
+.shadow-calm-lg  { box-shadow: var(--shadow-lg); }
+
+/* ── Mobile touch targets ────────────────────────────────────── */
+@media (max-width: 640px) {
+  button, a { min-height: 40px; }
 }

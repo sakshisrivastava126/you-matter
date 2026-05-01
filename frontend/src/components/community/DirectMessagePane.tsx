@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Send, MessageCircle, Search, Wifi, WifiOff } from "lucide-react";
+import { Send, MessageCircle, Search, Wifi, WifiOff, ArrowLeft } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -13,12 +13,10 @@ interface DirectMessagePaneProps {
   currentUser: User;
 }
 
-// Keyed by the OTHER user's _id
 type ConvoMap = Record<string, DirectMessage[]>;
 
 const addToConvo = (map: ConvoMap, key: string, msg: DirectMessage): ConvoMap => {
   const existing = map[key] ?? [];
-  // Deduplicate by _id
   if (msg._id && existing.some((m) => m._id === msg._id)) return map;
   return { ...map, [key]: [...existing, msg] };
 };
@@ -27,33 +25,26 @@ export const DirectMessagePane = ({ currentUser }: DirectMessagePaneProps) => {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [convos, setConvos] = useState<ConvoMap>({});      // all conversations
+  const [convos, setConvos] = useState<ConvoMap>({});
   const [unread, setUnread] = useState<Record<string, number>>({});
   const [input, setInput] = useState("");
-  const [isSending, setIsSending] = useState("");          // userId being sent to
+  const [isSending, setIsSending] = useState("");
   const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const selectedUserRef = useRef<User | null>(null);
   selectedUserRef.current = selectedUser;
 
-  // ── Load user list ──────────────────────────────────────────────────────
   useEffect(() => {
     fetchUsers()
       .then((res) => { if (res.success) setUsers(res.users); })
       .catch(console.error);
   }, []);
 
-  // ── Handle incoming DM (store in conversation map regardless of selected) ─
   const handleIncoming = useCallback((msg: DirectMessage) => {
-    // Which "other" user does this message belong to?
     const otherUserId =
       msg.senderId === currentUser._id ? msg.receiverId : msg.senderId;
-
     setConvos((prev) => addToConvo(prev, otherUserId, msg));
-
-    // If the message is from someone other than the currently open conversation,
-    // increment their unread badge
     if (
       msg.senderId !== currentUser._id &&
       msg.senderId !== selectedUserRef.current?._id
@@ -68,12 +59,9 @@ export const DirectMessagePane = ({ currentUser }: DirectMessagePaneProps) => {
     onOnlineUsers: (ids) => { setOnlineUserIds(ids); setIsConnected(true); },
   });
 
-  // ── Load history when a user is selected ───────────────────────────────
   useEffect(() => {
     if (!selectedUser) return;
-    // Clear unread for this user
     setUnread((prev) => ({ ...prev, [selectedUser._id]: 0 }));
-    // Only fetch if we don't have any messages yet
     if (convos[selectedUser._id]) return;
     fetchDmHistory(selectedUser._id)
       .then((res) => {
@@ -85,13 +73,11 @@ export const DirectMessagePane = ({ currentUser }: DirectMessagePaneProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUser]);
 
-  // ── Auto-scroll ─────────────────────────────────────────────────────────
   const messages = selectedUser ? (convos[selectedUser._id] ?? []) : [];
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
 
-  // ── Send ────────────────────────────────────────────────────────────────
   const handleSend = async () => {
     if (!input.trim() || !selectedUser || isSending) return;
     const text = input.trim();
@@ -101,9 +87,7 @@ export const DirectMessagePane = ({ currentUser }: DirectMessagePaneProps) => {
       const res = await persistDm(selectedUser._id, text);
       if (res.success && res.newMessage) {
         const msg = res.newMessage;
-        // Add locally immediately
         setConvos((prev) => addToConvo(prev, selectedUser._id, msg));
-        // Deliver real-time to recipient
         sendDm(selectedUser._id, msg);
       }
     } catch (err) {
@@ -121,163 +105,203 @@ export const DirectMessagePane = ({ currentUser }: DirectMessagePaneProps) => {
     u.userName.toLowerCase().includes(search.toLowerCase())
   );
 
-  return (
-    <div className="flex gap-5 h-[calc(100vh-16rem)]">
+  // ── Shared: People List ────────────────────────────────────────────────────
+  const PeopleList = () => (
+    <>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#B8C0CC]" />
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search people…"
+          className="w-full bg-[#FAFAFA] border border-[#E8EDF2] rounded-xl pl-8 pr-3 py-2 text-xs text-[#333333] placeholder:text-[#B8C0CC] focus:outline-none focus:border-[#4A6FA5]/40 focus:shadow-[0_0_0_3px_rgba(74,111,165,.08)] transition-all"
+        />
+      </div>
 
-      {/* ── People sidebar ─────────────────────────────────────────── */}
-      <Card className="w-64 flex-shrink-0 flex flex-col p-3 gap-2 h-full overflow-hidden">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search people…"
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50"
-          />
-        </div>
+      <p className="text-[#B8C0CC] text-xs font-semibold uppercase tracking-widest px-1 pt-1">
+        People
+      </p>
 
-        <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest px-1 pt-1">
-          People
-        </p>
-
-        <div className="flex-1 overflow-y-auto space-y-1 pr-1">
-          {filteredUsers.length === 0 ? (
-            <p className="text-slate-600 text-xs text-center py-6">No users found</p>
-          ) : (
-            filteredUsers.map((u) => {
-              const isOnline = onlineUserIds.includes(u._id);
-              const isSelected = selectedUser?._id === u._id;
-              const badge = unread[u._id] ?? 0;
-              return (
-                <button
-                  key={u._id}
-                  id={`dm-user-${u._id}`}
-                  onClick={() => setSelectedUser(u)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all duration-200 ${
-                    isSelected
-                      ? "bg-violet-600/20 border border-violet-500/30"
-                      : "hover:bg-white/8 border border-transparent"
-                  }`}
-                >
-                  <div className="relative flex-shrink-0">
-                    <Avatar name={u.userName} size="sm" />
-                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-slate-900 ${isOnline ? "bg-emerald-400" : "bg-slate-600"}`} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-medium truncate ${isSelected ? "text-violet-300" : "text-slate-200"}`}>{u.userName}</p>
-                    <p className="text-xs text-slate-500 truncate capitalize">{u.role}</p>
-                  </div>
-                  {badge > 0 && (
-                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-violet-500 text-white text-[10px] font-bold flex items-center justify-center">
-                      {badge > 9 ? "9+" : badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })
-          )}
-        </div>
-      </Card>
-
-      {/* ── Chat pane ──────────────────────────────────────────────── */}
-      <Card className="flex-1 flex flex-col min-w-0 overflow-hidden h-full">
-        {selectedUser ? (
-          <>
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Avatar name={selectedUser.userName} size="md" />
-                  <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${onlineUserIds.includes(selectedUser._id) ? "bg-emerald-400" : "bg-slate-600"}`} />
-                </div>
-                <div>
-                  <h2 className="text-white font-semibold">{selectedUser.userName}</h2>
-                  <p className="text-xs text-slate-400 capitalize">
-                    {onlineUserIds.includes(selectedUser._id) ? "Online" : "Offline"} · {selectedUser.role}
-                  </p>
-                </div>
-              </div>
-              <div className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full ${isConnected ? "text-emerald-400 bg-emerald-400/10" : "text-slate-500 bg-white/5"}`}>
-                {isConnected ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
-                {isConnected ? "Live" : "Connecting…"}
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 min-h-0">
-              {messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-                    <MessageCircle className="w-7 h-7 text-violet-400" />
-                  </div>
-                  <p className="text-slate-400 text-sm">
-                    Start a conversation with <span className="text-violet-400">{selectedUser.userName}</span>
-                  </p>
-                </div>
-              ) : (
-                messages.map((msg, i) => {
-                  const isMine = msg.senderId === currentUser._id;
-                  const senderName = isMine ? currentUser.userName : selectedUser.userName;
-                  const timeStr = msg.createdAt
-                    ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                    : "";
-                  return (
-                    <div key={msg._id ?? i} className={`flex gap-3 ${isMine ? "flex-row-reverse" : ""}`}>
-                      <Avatar name={senderName} size="sm" className="flex-shrink-0 mt-1" />
-                      <div className={`max-w-[70%] flex flex-col gap-1 ${isMine ? "items-end" : "items-start"}`}>
-                        {!isMine && <span className="text-xs text-slate-400 font-medium px-1">{senderName}</span>}
-                        <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${isMine ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-tr-sm" : "bg-white/10 text-slate-200 rounded-tl-sm"}`}>
-                          {msg.message}
-                        </div>
-                        {timeStr && <span className="text-xs text-slate-600 px-1">{timeStr}</span>}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-              <div ref={bottomRef} />
-            </div>
-
-            {/* Input */}
-            <div className="flex-shrink-0 px-5 py-4 border-t border-white/10">
-              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-2 focus-within:border-violet-500/50 transition-colors">
-                <Avatar name={currentUser.userName} size="sm" />
-                <input
-                  id="dm-message-input"
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={`Message ${selectedUser.userName}…`}
-                  className="flex-1 bg-transparent text-white placeholder:text-slate-500 text-sm focus:outline-none"
-                />
-                <Button
-                  id="dm-send-btn"
-                  variant="primary"
-                  size="sm"
-                  onClick={handleSend}
-                  disabled={!input.trim() || !!isSending}
-                  isLoading={!!isSending}
-                  className="!px-3 !py-2 rounded-xl"
-                >
-                  <Send className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </>
+      <div className="flex-1 overflow-y-auto space-y-0.5 pr-1">
+        {filteredUsers.length === 0 ? (
+          <p className="text-[#B8C0CC] text-xs text-center py-6">No users found</p>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
-            <div className="w-20 h-20 rounded-3xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-              <MessageCircle className="w-9 h-9 text-violet-400" />
-            </div>
-            <div>
-              <h3 className="text-white font-semibold text-lg">Direct Messages</h3>
-              <p className="text-slate-400 text-sm mt-1">Select someone from the list to start a private conversation</p>
-            </div>
-          </div>
+          filteredUsers.map((u) => {
+            const isOnline = onlineUserIds.includes(u._id);
+            const isSelected = selectedUser?._id === u._id;
+            const badge = unread[u._id] ?? 0;
+            return (
+              <button
+                key={u._id}
+                id={`dm-user-${u._id}`}
+                onClick={() => setSelectedUser(u)}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all duration-200 border ${
+                  isSelected
+                    ? "bg-[#CFE8F3] border-[#B8D8EC]"
+                    : "hover:bg-[#CFE8F3]/30 border-transparent hover:border-[#D8EEF8]"
+                }`}
+              >
+                <div className="relative flex-shrink-0">
+                  <Avatar name={u.userName} size="sm" />
+                  <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${isOnline ? "bg-emerald-400" : "bg-[#B8C0CC]"}`} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className={`text-sm font-medium truncate ${isSelected ? "text-[#4A6FA5]" : "text-[#333333]"}`}>{u.userName}</p>
+                  <p className="text-xs text-[#B8C0CC] truncate capitalize">{u.role}</p>
+                </div>
+                {badge > 0 && (
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#4A6FA5] text-white text-[10px] font-bold flex items-center justify-center">
+                    {badge > 9 ? "9+" : badge}
+                  </span>
+                )}
+              </button>
+            );
+          })
         )}
-      </Card>
-    </div>
+      </div>
+    </>
+  );
+
+  // ── Shared: Chat Messages ──────────────────────────────────────────────────
+  const ChatPane = () => (
+    <>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#E8EDF2] bg-gradient-to-r from-[#CFE8F3]/20 to-[#E6DDF5]/20 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          {/* Back button — mobile only */}
+          <button
+            onClick={() => setSelectedUser(null)}
+            className="lg:hidden p-1.5 -ml-1 rounded-lg text-[#5A6475] hover:text-[#4A6FA5] hover:bg-[#CFE8F3]/50 transition-colors"
+            aria-label="Back to contacts"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="relative">
+            <Avatar name={selectedUser!.userName} size="md" />
+            <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${onlineUserIds.includes(selectedUser!._id) ? "bg-emerald-400" : "bg-[#B8C0CC]"}`} />
+          </div>
+          <div>
+            <h2 className="text-[#333333] font-semibold text-sm leading-tight">{selectedUser!.userName}</h2>
+            <p className="text-xs text-[#B8C0CC] capitalize">
+              {onlineUserIds.includes(selectedUser!._id) ? "Online" : "Offline"} · {selectedUser!.role}
+            </p>
+          </div>
+        </div>
+        <div className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-full border ${isConnected ? "text-emerald-600 bg-emerald-50 border-emerald-100" : "text-[#B8C0CC] bg-[#FAFAFA] border-[#E8EDF2]"}`}>
+          {isConnected ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+          <span className="hidden sm:inline">{isConnected ? "Live" : "Connecting…"}</span>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-4 space-y-4 min-h-0 bg-[#FAFAFA]">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-[#E6DDF5] border border-[#D8CFF0] flex items-center justify-center">
+              <MessageCircle className="w-6 h-6 text-[#6B52A5]" />
+            </div>
+            <p className="text-[#B8C0CC] text-sm">
+              Start a conversation with <span className="text-[#4A6FA5] font-medium">{selectedUser!.userName}</span>
+            </p>
+          </div>
+        ) : (
+          messages.map((msg, i) => {
+            const isMine = msg.senderId === currentUser._id;
+            const senderName = isMine ? currentUser.userName : selectedUser!.userName;
+            const timeStr = msg.createdAt
+              ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+              : "";
+            return (
+              <div key={msg._id ?? i} className={`flex gap-2.5 ${isMine ? "flex-row-reverse" : ""}`}>
+                <Avatar name={senderName} size="sm" className="flex-shrink-0 mt-1" />
+                <div className={`max-w-[80%] sm:max-w-[70%] flex flex-col gap-1 ${isMine ? "items-end" : "items-start"}`}>
+                  {!isMine && <span className="text-xs text-[#B8C0CC] font-medium px-1">{senderName}</span>}
+                  <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm ${isMine ? "bg-[#4A6FA5] text-white rounded-tr-sm" : "bg-white text-[#333333] rounded-tl-sm border border-[#E8EDF2]"}`}>
+                    {msg.message}
+                  </div>
+                  {timeStr && <span className="text-xs text-[#B8C0CC] px-1">{timeStr}</span>}
+                </div>
+              </div>
+            );
+          })
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div className="flex-shrink-0 px-3 sm:px-5 py-3 border-t border-[#E8EDF2] bg-white">
+        <div className="flex items-center gap-2 sm:gap-3 bg-[#FAFAFA] border border-[#E8EDF2] rounded-2xl px-3 sm:px-4 py-2 focus-within:border-[#4A6FA5]/40 focus-within:shadow-[0_0_0_3px_rgba(74,111,165,.08)] transition-all">
+          <Avatar name={currentUser.userName} size="sm" />
+          <input
+            id="dm-message-input"
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={`Message ${selectedUser!.userName}…`}
+            className="flex-1 bg-transparent text-[#333333] placeholder:text-[#B8C0CC] text-sm focus:outline-none"
+          />
+          <Button
+            id="dm-send-btn"
+            variant="primary"
+            size="sm"
+            onClick={handleSend}
+            disabled={!input.trim() || !!isSending}
+            isLoading={!!isSending}
+            className="!px-2.5 sm:!px-3 !py-2 rounded-xl flex-shrink-0"
+          >
+            <Send className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+
+  // ── MOBILE layout: single-column, slides between list & chat ──────────────
+  const mobileCardClass = "flex-1 flex flex-col min-h-0 overflow-hidden";
+
+  return (
+    <>
+      {/* ── MOBILE (<lg) ───────────────────────────────────────────────── */}
+      <div className="lg:hidden flex-1 flex flex-col min-h-0">
+        {!selectedUser ? (
+          <Card className={`${mobileCardClass} gap-3 p-3`}>
+            <PeopleList />
+            {filteredUsers.length > 0 && (
+              <p className="text-xs text-[#B8C0CC] text-center pb-1 flex-shrink-0">
+                Tap a person to start chatting
+              </p>
+            )}
+          </Card>
+        ) : (
+          <Card className={mobileCardClass}>
+            <ChatPane />
+          </Card>
+        )}
+      </div>
+
+      {/* ── DESKTOP (lg+) — side-by-side ─────────────────────────────── */}
+      <div className="hidden lg:flex flex-1 min-h-0 gap-5">
+        <Card className="w-64 flex-shrink-0 flex flex-col p-3 gap-2 overflow-hidden">
+          <PeopleList />
+        </Card>
+        <Card className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {selectedUser ? (
+            <ChatPane />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#CFE8F3] to-[#E6DDF5] border border-[#D1DAE5] flex items-center justify-center">
+                <MessageCircle className="w-9 h-9 text-[#4A6FA5]" />
+              </div>
+              <div>
+                <h3 className="text-[#333333] font-semibold text-lg">Direct Messages</h3>
+                <p className="text-[#B8C0CC] text-sm mt-1">Select someone from the list to start a private conversation</p>
+              </div>
+            </div>
+          )}
+        </Card>
+      </div>
+    </>
   );
 };
