@@ -104,7 +104,7 @@ export default function SignupPage() {
               id="signup-username"
               label="Full name"
               type="text"
-              placeholder="Jane Doe"
+              placeholder="Enter your name"
               autoComplete="name"
               value={form.userName}
               onChange={set("userName")}
