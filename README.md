@@ -42,7 +42,7 @@ You Matter is a full-stack web application designed to provide a safe, interacti
 
 * Next.js
 * React
-* Tailwind CSS (if applicable)
+* Tailwind CSS 
 
 ### Backend
 
